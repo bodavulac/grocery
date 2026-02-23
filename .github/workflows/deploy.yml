@@ -1,0 +1,59 @@
+name: Deploy to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches: [ "release" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # Install and build frontend
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend
+
+      # Copy frontend build to backend/public for serving
+      - name: Copy frontend build to backend
+        run: |
+          rm -rf backend/public
+          cp -r frontend/build backend/public
+
+      # Install backend dependencies
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend
+
+      # Run backend tests
+      - name: Run backend tests
+        run: npm test
+        working-directory: backend
+
+      # Package the backend (with frontend build included) for deployment
+      - name: Generate deployment package
+        run: |
+          cd backend
+          zip -r ../deploy.zip . -x "node_modules/*" "__tests__/*" "*.test.js"
+
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: grocery-order-tracker
+          environment_name: grocery-tracker-env
+          region: ap-south-1
+          version_label: "grocery-${{ github.sha }}"
+          deployment_package: deploy.zip
