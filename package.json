@@ -1,0 +1,20 @@
+{
+  "name": "grocery-order-tracker",
+  "version": "1.0.0",
+  "description": "Grocery Order Tracking application with Node.js backend and React.js frontend",
+  "scripts": {
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm start",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "test": "npm run test:backend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
