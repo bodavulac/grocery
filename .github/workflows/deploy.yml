@@ -50,8 +50,8 @@ jobs:
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
         with:
-          aws_access_key: AKIAVQEM2HSFPGXCQQVQ
-          aws_secret_key: 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
+          aws_access_key: 
+          aws_secret_key: 
           application_name: grocery-order-tracker
           environment_name: grocery-tracker-env
           region: ap-south-1
